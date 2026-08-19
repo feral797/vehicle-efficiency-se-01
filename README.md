@@ -1,2 +1,2 @@
-# vehicle-efficiency-se-01
-Vehicle Efficiency Calculator for Software Engineering
+# Vehicle Efficiency Calculator
+A simple .net CLI application built as an extension of my Software Engineering class assignment.
