@@ -5,12 +5,95 @@ namespace VehicleEfficiencyCalculator
     {
         static void Main(string[] args)
         {
+            string recommendation = ""; // Car | Bus | Bike
+
             double distance = GetFullInput("Enter travel distance (in KM):");
             double fuelEfficiency = GetFullInput("Enter car fuel efficiency (KM/Liter):");
             double fuelPrice = GetFullInput("Enter current fuel price ($/Liter):");
             double busFare = GetFullInput("Enter bus fare for one trip ($):");
 
             double userPriority = GetFullInput("Enter your priority (1 = speed, 2 = eco-friendly, 3 = balanced):");
+
+            // sorting calculations
+            // car calcs
+            double fuelUsed = distance / fuelEfficiency;
+            double carCost = fuelUsed * fuelPrice;
+            double carCO2 = fuelUsed * 2.31;
+            double carTime = (distance / 40) * 60;
+            double carTimeWithParking = carTime + 5;
+
+            // bus calcs
+            double busCost = busFare;
+            double busCO2 = distance * 0.08;
+            double busTime = (distance / 25) * 60 + 10;
+
+            // bike calcs
+            double bicycleCost = 0;
+            double bicycleCO2 = 0;
+            double bicycleTime = (distance / 15) * 60;
+
+            // displaying data
+            Console.WriteLine("=============================================");
+            Console.WriteLine("Mode:   | Time (Min) | Cost ($) | CO2 (kg)");
+            Console.WriteLine("Car :   | " + carTimeWithParking + " | $" + carCost + " | " + carCO2 + "kg"); // car data
+            Console.WriteLine("Bus :   | " + busTime + " | $" + busCost + " | " + busCO2 + "kg"); // bus data
+            Console.WriteLine("Bike:   | " + bicycleTime + " | $" + bicycleCost + " | " + bicycleCO2 + "kg"); // bike data
+            Console.WriteLine("=============================================");
+
+            // all the maths stuff 😋
+            if (userPriority == 1) // speed
+            {
+                if (carTimeWithParking <= busTime && carTimeWithParking <= bicycleTime)
+                {
+                    recommendation = "Car";
+                }
+                else if (busTime <= carTimeWithParking && busTime <= bicycleTime)
+                {
+                    recommendation = "Bus";
+                }
+                else
+                {
+                    recommendation = "Bicycle";
+                }
+            }
+            else if (userPriority == 2) // eco friendly
+            {
+                if (bicycleCO2 <= busCO2 && bicycleCO2 <= carCO2)
+                {
+                    recommendation = "Bicycle";
+                }
+                else if (busCO2 <= bicycleCO2 && busCO2 <= carCO2)
+                {
+                    recommendation = "Bus";
+                }
+                else
+                {
+                    recommendation = "Car";
+                }
+            }
+            else if (userPriority == 3) // balanced
+            {
+                double speedScore = (carTimeWithParking / 60) + (busTime / 60) + (bicycleTime / 60);
+                double ecoScore = carCO2 + busCO2 + bicycleCO2;
+                double carBalanced = (carTimeWithParking / 60) + speedScore + (carCO2 / ecoScore);
+                double busBalanced = (busTime / 60) + speedScore + (busCO2 + ecoScore);
+                double bicycleBalanced = (bicycleTime / 60) + speedScore + (bicycleCO2 + ecoScore);
+
+                if (carBalanced <= busBalanced && carBalanced <= bicycleBalanced)
+                {
+                    recommendation = "Car";
+                }
+                else if (busBalanced <= carBalanced && busBalanced <= bicycleBalanced)
+                {
+                    recommendation = "Bus";
+                }
+                else
+                {
+                    recommendation = "Bicycle";
+                }
+            }
+
+            Console.WriteLine("Recommendation: " + recommendation);
         }
 
         static double GetFullInput(string? prompt) // making it quicker to do amounts of data collection
